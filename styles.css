@@ -117,7 +117,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 .work-section { width: min(1220px, calc(100% - 40px)); margin: 0 auto; padding: 115px 0; }
 .carousel { display: grid; gap: 14px; }
-.carousel-viewport { min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; touch-action: pan-x; }
+.carousel-viewport { min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .carousel-viewport::-webkit-scrollbar { display: none; }
 .carousel-track { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 20px; }
 .carousel-slide { min-width: 0; scroll-snap-align: start; scroll-snap-stop: always; }

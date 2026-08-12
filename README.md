@@ -9,7 +9,7 @@
 - `app.js`：分步表單、驗證與送出狀態
 - `config.js`：公開設定，只放 Apps Script Web App URL
 - `privacy.html`：表單資料使用說明
-- `assets/small-business-value-triptych.png`：AI 生成的小型企業工作情境示意圖
+- `assets/small-business-value-*.png`：三張 1:1 的 AI 生成小型企業工作情境輪播圖片
 - `backend/Code.gs`：Gmail、LINE、選用 Google Sheet 的通知後端
 
 ## 1. 建立 Apps Script 後端
