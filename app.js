@@ -41,6 +41,57 @@
   }, { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach((node) => observer.observe(node));
 
+  document.querySelectorAll("[data-carousel]").forEach((carousel) => {
+    const viewport = carousel.querySelector("[data-carousel-viewport]");
+    const slides = [...carousel.querySelectorAll("[data-carousel-slide]")];
+    const previous = carousel.querySelector("[data-carousel-prev]");
+    const next = carousel.querySelector("[data-carousel-next]");
+    const status = carousel.querySelector("[data-carousel-status]");
+    let activeIndex = 0;
+
+    const currentIndex = () => slides.reduce((nearest, slide, index) => {
+      const nearestDistance = Math.abs(slides[nearest].offsetLeft - viewport.scrollLeft);
+      const distance = Math.abs(slide.offsetLeft - viewport.scrollLeft);
+      return distance < nearestDistance ? index : nearest;
+    }, 0);
+
+    const updateControls = () => {
+      activeIndex = currentIndex();
+      previous.disabled = activeIndex === 0;
+      next.disabled = activeIndex === slides.length - 1;
+      status.textContent = `第 ${activeIndex + 1} 張，共 ${slides.length} 張`;
+    };
+
+    const goToSlide = (index) => {
+      const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
+      slides[nextIndex].scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "nearest",
+        inline: "start"
+      });
+    };
+
+    previous.addEventListener("click", () => goToSlide(activeIndex - 1));
+    next.addEventListener("click", () => goToSlide(activeIndex + 1));
+    viewport.addEventListener("scroll", () => window.requestAnimationFrame(updateControls), { passive: true });
+    viewport.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goToSlide(activeIndex + 1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goToSlide(activeIndex - 1);
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        goToSlide(0);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        goToSlide(slides.length - 1);
+      }
+    });
+    updateControls();
+  });
+
   const setBudget = (budget) => {
     if (!budget) return;
     selectedBudget = budget;

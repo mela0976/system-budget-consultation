@@ -20,6 +20,7 @@
    - `NOTIFY_EMAIL`：接收詢問通知的 Gmail 地址。
    - `LINE_CHANNEL_ACCESS_TOKEN`：LINE Messaging API channel access token。
    - `SHEET_ID`：選填；若要把每筆詢問寫入 Google Sheet，填入試算表 ID。
+   - `LINE_BINDING_CODE`：只在首次或更換 LINE 收件人時暫時設定；請使用至少 24 字元的隨機字串，完成綁定後立即刪除。
 4. 按「部署 → 新增部署 → 網頁應用程式」。
    - 執行身分：我
    - 誰可以存取：任何人
@@ -31,9 +32,9 @@
 
 1. 建立或使用既有的 LINE Official Account，啟用 Messaging API。
 2. 在 LINE Developers Console 發行 channel access token，填入 Apps Script 的 `LINE_CHANNEL_ACCESS_TOKEN`。
-3. 把 Apps Script `/exec` 網址設成 LINE Messaging API Webhook URL，開啟 Webhook。
-4. 用自己的 LINE 加該官方帳號為好友，傳送文字：`綁定通知`
-5. 收到「已綁定 MELA 網站詢問通知」後，Apps Script 已自動保存你的 `LINE_USER_ID`。
+3. 需要首次綁定或更換收件帳號時，把 Apps Script `/exec` 網址設成 LINE Messaging API Webhook URL，並開啟 Webhook。
+4. 先在 Apps Script 指令碼屬性填入私密的 `LINE_BINDING_CODE`，再用自己的 LINE 加該官方帳號為好友，傳送：`綁定通知 你的綁定碼`
+5. 收到「已綁定 MELA 網站詢問通知」後，Apps Script 已保存你的 `LINE_USER_ID`；立即刪除 `LINE_BINDING_CODE`，之後任何 LINE 訊息都不能改寫通知對象。
 
 LINE Notify 已停止服務，本專案使用官方 Messaging API Push Message。Channel access token 只放在 Apps Script 屬性中，不得寫入 `config.js` 或 GitHub。
 
@@ -47,6 +48,7 @@ LINE Notify 已停止服務，本專案使用官方 Messaging API Push Message�
 
 - 前端加入 honeypot、最短填寫時間、必填與聯絡方式驗證。
 - 後端對相同聯絡資訊做 10 分鐘最多 4 次的簡易頻率限制。
+- Google Sheet 會將 `=`, `+`, `-`, `@` 開頭的訪客輸入存成純文字，避免公式注入。
 - 不要在表單、GitHub commit、Issue 或聊天中貼 Gmail 密碼、LINE token 或其他 API 金鑰。
 - 若 token 疑似外洩，立即在 LINE Developers Console 撤銷並重新發行。
 - Apps Script、Gmail、LINE 與 GitHub Pages 都有各自用量與服務限制；正式投放廣告前應評估 reCAPTCHA 或更完整的 serverless 後端。

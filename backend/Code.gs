@@ -137,10 +137,13 @@ function sendLine_(data) {
 function handleLineWebhook_(e) {
   const payload = JSON.parse(e.postData.contents || '{}');
   const token = PROP.getProperty('LINE_CHANNEL_ACCESS_TOKEN');
+  const bindingCode = String(PROP.getProperty('LINE_BINDING_CODE') || '').trim();
   (payload.events || []).forEach(event => {
     const userId = event.source && event.source.userId;
     const text = event.message && event.message.type === 'text' ? event.message.text.trim() : '';
-    if (!userId || text !== '綁定通知') return;
+    // Apps Script does not expose the LINE signature header for verification.
+    // Require a private, one-time binding code before changing the recipient.
+    if (!userId || !bindingCode || text !== '綁定通知 ' + bindingCode) return;
     PROP.setProperty('LINE_USER_ID', userId);
     if (token && event.replyToken) {
       lineRequest_(LINE_REPLY_URL, token, { replyToken: event.replyToken, messages: [{ type: 'text', text: '已綁定 MELA 網站詢問通知。之後有新表單時，會傳訊息到這裡。' }] });
@@ -171,7 +174,7 @@ function appendToSheet_(data) {
     if (sheet.getLastRow() === 0) {
       sheet.appendRow(['收到時間','Lead ID','主要需求','目前狀況','時程','預算','功能','姓名','公司','Email','電話','LINE ID','偏好聯絡','說明','來源頁面']);
     }
-    sheet.appendRow([data.receivedAt,data.leadId,data.primaryNeed,data.currentStage,data.timeline,data.budget,data.features,data.name,data.company,data.email,data.phone,data.lineId,data.preferredContact,data.message,data.pageUrl]);
+    sheet.appendRow([data.receivedAt,data.leadId,data.primaryNeed,data.currentStage,data.timeline,data.budget,data.features,data.name,data.company,data.email,data.phone,data.lineId,data.preferredContact,data.message,data.pageUrl].map(sheetCell_));
   } finally {
     lock.releaseLock();
   }
@@ -201,6 +204,11 @@ function publicErrorMessage_(error) {
 
 function clean_(value, maxLength) {
   return String(value || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim().slice(0, maxLength);
+}
+
+function sheetCell_(value) {
+  const text = String(value == null ? '' : value);
+  return /^[\t\r\n ]*[=+\-@]/.test(text) ? "'" + text : text;
 }
 
 function html_(value) {

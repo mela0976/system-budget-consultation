@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chiron+Hei+HK:wght@400;500;600;700;800&amp;family=LXGW+WenKai+TC:wght@400;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260812-4">
+  <link rel="stylesheet" href="styles.css?v=20260812-5">
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要內容</a>
@@ -120,8 +120,10 @@
         <p>從 AI 客服、文件比對到商品與工廠資料流程。以下依實際開發紀錄整理，並如實標示目前進度。</p>
       </div>
 
-      <div class="work-grid">
-        <article class="work-card reveal">
+      <div class="carousel work-carousel reveal" data-carousel aria-roledescription="carousel" aria-label="系統專案輪播">
+        <div class="carousel-viewport" data-carousel-viewport tabindex="0" aria-label="使用左右方向鍵切換系統專案">
+          <div class="carousel-track">
+        <article class="work-card carousel-slide" data-carousel-slide>
           <div class="work-visual visual-chat" role="img" aria-label="LINE AI 客服先回答保險問題，再讓使用者選擇是否轉接真人的去識別化流程示意">
             <div class="visual-toolbar"><span class="toolbar-dots" aria-hidden="true"><i></i><i></i><i></i></span><b>LINE AI CUSTOMER SERVICE</b></div>
             <div class="chat-stage">
@@ -151,7 +153,7 @@
           </div>
         </article>
 
-        <article class="work-card reveal">
+        <article class="work-card carousel-slide" data-carousel-slide>
           <div class="work-visual visual-docs" role="img" aria-label="IRB 系統把研究計畫與同意書左右比對，標記來源頁碼與需人工確認內容的去識別化流程示意">
             <div class="visual-toolbar"><span class="toolbar-dots" aria-hidden="true"><i></i><i></i><i></i></span><b>DOCUMENT REVIEW / LOCAL AI</b></div>
             <div class="docs-stage">
@@ -174,7 +176,7 @@
           </div>
         </article>
 
-        <article class="work-card reveal">
+        <article class="work-card carousel-slide" data-carousel-slide>
           <div class="work-visual visual-insight" role="img" aria-label="商品開發系統從品牌網址建立競品地圖、整合多平台聲量並產出商品機會建議的去識別化流程示意">
             <div class="visual-toolbar"><span class="toolbar-dots" aria-hidden="true"><i></i><i></i><i></i></span><b>PRODUCT INSIGHT STUDIO</b></div>
             <div class="insight-stage">
@@ -196,7 +198,7 @@
           </div>
         </article>
 
-        <article class="work-card reveal">
+        <article class="work-card carousel-slide" data-carousel-slide>
           <div class="work-visual visual-factory" role="img" aria-label="工廠現場以 LINE 輸入資料，串接中央資料庫、GMP 簽核與 BI 儀表板的去識別化流程示意">
             <div class="visual-toolbar"><span class="toolbar-dots" aria-hidden="true"><i></i><i></i><i></i></span><b>SMART FACTORY CONTROL</b></div>
             <div class="factory-stage">
@@ -220,6 +222,13 @@
             <div class="work-tags"><span>LINE 流程</span><span>PostgreSQL</span><span>GMP 簽核</span><span>BI 儀表板</span></div>
           </div>
         </article>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-control" type="button" data-carousel-prev aria-label="上一個系統專案">←</button>
+          <p class="carousel-status" aria-live="polite" data-carousel-status>第 1 張，共 4 張</p>
+          <button class="carousel-control" type="button" data-carousel-next aria-label="下一個系統專案">→</button>
+        </div>
       </div>
       <p class="work-note">為保護使用者與系統資料，上方畫面皆依實際功能重新繪製為去識別化流程示意，不呈現客戶名稱、帳號或真實資料。</p>
     </section>
@@ -230,10 +239,29 @@
         <h2 id="story-title">真正有感的，<span class="keep">不是功能名稱。</span></h2>
         <p>而是詢問有人接、資料找得到、下班後不用再整理一遍。</p>
       </div>
-      <figure class="story-photo reveal">
-        <img src="assets/small-business-value-triptych.png" width="2172" height="724" alt="三種小型企業工作情境：店主處理線上詢問、同事一起確認資料，以及工作者查看手機通知" loading="lazy">
-        <figcaption>小店、專業服務與工作室的日常情境示意</figcaption>
-      </figure>
+      <div class="carousel story-carousel reveal" data-carousel aria-roledescription="carousel" aria-label="使用情境圖片輪播">
+        <div class="carousel-viewport" data-carousel-viewport tabindex="0" aria-label="使用左右方向鍵切換使用情境圖片">
+          <div class="carousel-track">
+            <figure class="story-photo carousel-slide" data-carousel-slide>
+              <img src="assets/small-business-value-square.png" width="1254" height="1254" alt="小型企業經營者在工作桌前查看客戶通知與筆電資料的情境示意" loading="lazy">
+              <figcaption>一個地方看見詢問與下一步</figcaption>
+            </figure>
+            <figure class="story-photo carousel-slide" data-carousel-slide>
+              <img src="assets/small-business-value-team.png" width="1254" height="1254" alt="兩位小型企業夥伴一起確認客戶需求與工作進度的情境示意" loading="lazy">
+              <figcaption>交接有依據，團隊更好合作</figcaption>
+            </figure>
+            <figure class="story-photo carousel-slide" data-carousel-slide>
+              <img src="assets/small-business-value-follow-up.png" width="1254" height="1254" alt="小型企業經營者一邊回覆客戶一邊查看工作資料的情境示意" loading="lazy">
+              <figcaption>該跟進的人，不再被忙碌漏掉</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-control" type="button" data-carousel-prev aria-label="上一張使用情境圖片">←</button>
+          <p class="carousel-status" aria-live="polite" data-carousel-status>第 1 張，共 3 張</p>
+          <button class="carousel-control" type="button" data-carousel-next aria-label="下一張使用情境圖片">→</button>
+        </div>
+      </div>
       <div class="feedback-grid">
         <blockquote class="feedback-card reveal">
           <p>「以前詢問散在 LINE、表單和私訊裡，最怕忙完才發現漏回。現在我只要看一個地方，就知道今天要跟進誰。」</p>
@@ -543,7 +571,7 @@
     </div>
   </dialog>
 
-  <script src="config.js?v=20260812-4"></script>
-  <script src="app.js?v=20260812-4" defer></script>
+  <script src="config.js?v=20260812-5"></script>
+  <script src="app.js?v=20260812-5" defer></script>
 </body>
 </html>
