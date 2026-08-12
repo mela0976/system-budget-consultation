@@ -14,9 +14,13 @@ function doPost(e) {
     }
     return handleInquiry_(e);
   } catch (error) {
-    console.error(error.stack || error);
     const leadId = clean_(e && e.parameter && e.parameter.leadId, 80);
-    return htmlResponse_('error', '系統暫時無法送出，請稍後再試。', leadId);
+    console.error(JSON.stringify({
+      event: 'inquiry_failed',
+      leadId: leadId || 'missing',
+      message: String(error && error.message || error || 'Unknown error')
+    }));
+    return htmlResponse_('error', publicErrorMessage_(error), leadId);
   }
 }
 
@@ -67,7 +71,9 @@ function normalizeForm_(e) {
     pageUrl: clean_(p.pageUrl, 500),
     referrer: clean_(p.referrer, 500),
     formStartedAt: Number(p.formStartedAt || 0),
-    honeypot: clean_(p.faxNumber || p.companyWebsite, 200)
+    // companyWebsite was the legacy trap name. Browsers may have autofilled it
+    // in already-open pages, so only the current faxNumber field is evaluated.
+    honeypot: clean_(p.faxNumber, 200)
   };
 }
 
@@ -176,6 +182,21 @@ function htmlResponse_(status, message, leadId) {
   const output = HtmlService.createHtmlOutput('<!doctype html><meta charset="utf-8"><script>window.top.postMessage(' + payload + ', "*");<\/script><p>' + html_(message) + '</p>');
   output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   return output;
+}
+
+function publicErrorMessage_(error) {
+  const message = String(error && error.message || '');
+  const allowedMessages = [
+    '短時間內送出次數過多，請稍後再試。',
+    '送出速度過快，請重新確認表單。',
+    '必填欄位不完整。',
+    '請至少留下 Email、電話或 LINE ID。',
+    'Email 格式不正確。',
+    '需要同意資料使用說明。'
+  ];
+  return allowedMessages.indexOf(message) !== -1
+    ? message
+    : '系統暫時無法送出，請稍後再試。';
 }
 
 function clean_(value, maxLength) {
