@@ -4,6 +4,7 @@
   const config = window.MELA_CONFIG || {};
   const dialog = document.querySelector("#intake-dialog");
   const form = document.querySelector("#intake-form");
+  const submissionTarget = document.querySelector(".submission-target");
   const steps = [...document.querySelectorAll(".form-step")];
   const nextButton = form.querySelector("[data-next]");
   const prevButton = form.querySelector("[data-prev]");
@@ -138,13 +139,15 @@
     submissionPending = true;
     form.submit();
     submissionTimer = window.setTimeout(() => {
-      if (submissionPending) handleSubmissionResult("success");
-    }, 5500);
+      if (submissionPending) {
+        handleSubmissionResult("error", "通知服務回覆逾時，尚未確認送達。請稍後再試，或改用其他聯絡方式。");
+      }
+    }, 15000);
   });
 
   window.addEventListener("message", (event) => {
     const data = event.data || {};
-    if (!submissionPending || data.source !== "mela-inquiry") return;
+    if (!submissionPending || event.source !== submissionTarget.contentWindow || data.source !== "mela-inquiry") return;
     handleSubmissionResult(data.status, data.message);
   });
 
