@@ -15,7 +15,8 @@ function doPost(e) {
     return handleInquiry_(e);
   } catch (error) {
     console.error(error.stack || error);
-    return htmlResponse_('error', '系統暫時無法送出，請稍後再試。', '');
+    const leadId = clean_(e && e.parameter && e.parameter.leadId, 80);
+    return htmlResponse_('error', '系統暫時無法送出，請稍後再試。', leadId);
   }
 }
 
@@ -172,7 +173,7 @@ function appendToSheet_(data) {
 
 function htmlResponse_(status, message, leadId) {
   const payload = JSON.stringify({ source: 'mela-inquiry', status: status, message: message, leadId: leadId });
-  const output = HtmlService.createHtmlOutput('<!doctype html><meta charset="utf-8"><script>window.parent.postMessage(' + payload + ', "*");<\/script><p>' + html_(message) + '</p>');
+  const output = HtmlService.createHtmlOutput('<!doctype html><meta charset="utf-8"><script>window.top.postMessage(' + payload + ', "*");<\/script><p>' + html_(message) + '</p>');
   output.setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   return output;
 }

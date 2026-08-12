@@ -147,7 +147,8 @@
 
   window.addEventListener("message", (event) => {
     const data = event.data || {};
-    if (!submissionPending || event.source !== submissionTarget.contentWindow || data.source !== "mela-inquiry") return;
+    const expectedLeadId = form.elements.leadId.value;
+    if (!submissionPending || data.source !== "mela-inquiry" || data.leadId !== expectedLeadId) return;
     handleSubmissionResult(data.status, data.message);
   });
 
