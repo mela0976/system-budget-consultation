@@ -1,6 +1,6 @@
 # MELA 系統需求健檢
 
-一個可部署到 GitHub Pages 的靜態方案網站，包含 3 萬起／5 萬／10 萬／50 萬預算比較與四步需求表單。表單透過 Google Apps Script 發送 Gmail 與 LINE Messaging API 通知；敏感憑證不會進入公開 repository。
+一個可部署到 GitHub Pages 的靜態方案網站，包含 3 萬起／5 萬／10 萬／50 萬起預算比較、去識別化系統作品集與四步需求表單。50 萬起方案定位為 CRM、數據中台或儀表板的範圍受控第一期。表單透過 Google Apps Script 發送 Gmail 與 LINE Messaging API 通知；敏感憑證不會進入公開 repository。
 
 ## 網站檔案
 
