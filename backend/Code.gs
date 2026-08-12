@@ -67,7 +67,7 @@ function normalizeForm_(e) {
     pageUrl: clean_(p.pageUrl, 500),
     referrer: clean_(p.referrer, 500),
     formStartedAt: Number(p.formStartedAt || 0),
-    honeypot: clean_(p.companyWebsite, 200)
+    honeypot: clean_(p.faxNumber || p.companyWebsite, 200)
   };
 }
 

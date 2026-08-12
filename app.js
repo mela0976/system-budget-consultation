@@ -133,6 +133,9 @@
       return;
     }
 
+    // Browser autofill sometimes populates off-screen anti-spam fields.
+    // Real visitors submit through this handler; direct bot posts still retain the trap value.
+    form.elements.faxNumber.value = "";
     form.action = config.formEndpoint;
     submitButton.disabled = true;
     submitButton.firstChild.textContent = "正在送出… ";
