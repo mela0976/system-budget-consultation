@@ -493,17 +493,28 @@ input:user-invalid, textarea:user-invalid, select:user-invalid { border-color: v
   footer { grid-template-columns: 1fr; padding: 38px 24px; }
   footer > div { justify-self: start; }
   footer p { grid-row: auto; }
-  .intake-dialog { width: 100%; max-height: none; height: 100%; border-radius: 0; }
-  .intake-shell { display: block; min-height: 100%; }
+  .intake-dialog { width: 100%; max-height: none; height: 100vh; height: 100dvh; border-radius: 0; }
+  .intake-shell { display: block; min-height: 100vh; min-height: 100dvh; }
   .intake-aside { display: none; }
-  .intake-form { height: 100vh; padding: 26px 20px 20px; }
-  .form-progress { margin-right: 44px; }
+  .dialog-close { top: 8px; right: 8px; width: 32px; height: 32px; font-size: 21px; }
+  .intake-form { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100vh; height: 100dvh; padding: 18px 16px 16px; overflow: hidden; }
+  .form-progress { margin: 0 40px 16px 0; }
+  .form-progress p { margin-top: 6px; font-size: 13px; }
+  .form-kicker { margin-bottom: 4px; font-size: 13px; }
+  .form-step { min-height: 0; padding: 0 2px; overflow-y: auto; overscroll-behavior: contain; scroll-padding: 0 0 16px; }
+  .form-step h3 { font-size: 26px; }
+  .form-help { margin: 4px 0 14px; font-size: 14px; line-height: 1.5; }
   .choice-grid { grid-template-columns: 1fr; }
   .choice-grid label > span { min-height: 65px; }
+  .choice-grid-main { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .choice-grid-main label > span { min-height: 76px; padding: 10px; }
+  .choice-grid-main label > span b { font-size: 14px; line-height: 1.35; }
+  .choice-grid-main label > span small { font-size: 12px; line-height: 1.35; }
   .budget-choices { grid-template-columns: repeat(3, 1fr); }
   .contact-grid { grid-template-columns: 1fr; }
   .contact-grid .full { grid-column: auto; }
-  .form-actions { position: sticky; bottom: -20px; margin: auto -20px -20px; padding: 14px 20px 20px; background: #fff; border-top: 1px solid var(--line); }
+  .form-actions { position: static; margin: 0 -16px -16px; padding: 10px 16px 16px; background: #fff; border-top: 1px solid var(--line); }
+  .form-actions .button { min-height: 48px; padding: 10px 14px; font-size: 14px; }
 }
 
 @media (max-width: 340px) {
