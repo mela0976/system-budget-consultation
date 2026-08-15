@@ -44,7 +44,7 @@ test("only safe validation messages are returned to visitors", () => {
 
 test("frontend supports mixed cached field names and versioned assets", () => {
   assert.match(appSource, /\["faxNumber", "companyWebsite"\]/);
-  assert.match(htmlSource, /styles\.css\?v=20260813-1/);
-  assert.match(htmlSource, /config\.js\?v=20260813-1/);
-  assert.match(htmlSource, /app\.js\?v=20260813-1/);
+  assert.match(htmlSource, /styles\.css\?v=20260815-1/);
+  assert.match(htmlSource, /config\.js\?v=20260815-1/);
+  assert.match(htmlSource, /app\.js\?v=20260815-1/);
 });

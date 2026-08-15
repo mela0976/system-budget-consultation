@@ -31,15 +31,23 @@
   window.addEventListener("scroll", updateHeader, { passive: true });
   updateHeader();
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach((node) => observer.observe(node));
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const revealNodes = [...document.querySelectorAll(".reveal")];
+
+  if (!prefersReducedMotion.matches && "IntersectionObserver" in window) {
+    document.documentElement.classList.add("motion-ready");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.16, rootMargin: "0px 0px -7% 0px" });
+    revealNodes.forEach((node) => observer.observe(node));
+  } else {
+    revealNodes.forEach((node) => node.classList.add("is-visible"));
+  }
 
   document.querySelectorAll("[data-carousel]").forEach((carousel) => {
     const viewport = carousel.querySelector("[data-carousel-viewport]");
@@ -47,7 +55,8 @@
     const previous = carousel.querySelector("[data-carousel-prev]");
     const next = carousel.querySelector("[data-carousel-next]");
     const status = carousel.querySelector("[data-carousel-status]");
-    let activeIndex = 0;
+    let activeIndex = -1;
+    let scrollFrame = 0;
 
     const currentIndex = () => slides.reduce((nearest, slide, index) => {
       const nearestDistance = Math.abs(slides[nearest].offsetLeft - viewport.scrollLeft);
@@ -56,24 +65,32 @@
     }, 0);
 
     const updateControls = () => {
-      activeIndex = currentIndex();
+      const nextIndex = currentIndex();
+      if (nextIndex === activeIndex) return;
+      activeIndex = nextIndex;
       previous.disabled = activeIndex === 0;
       next.disabled = activeIndex === slides.length - 1;
       status.textContent = `第 ${activeIndex + 1} 張，共 ${slides.length} 張`;
+      slides.forEach((slide, index) => slide.classList.toggle("is-active", index === activeIndex));
     };
 
     const goToSlide = (index) => {
       const nextIndex = Math.max(0, Math.min(index, slides.length - 1));
-      slides[nextIndex].scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-        block: "nearest",
-        inline: "start"
+      viewport.scrollTo({
+        left: slides[nextIndex].offsetLeft,
+        behavior: prefersReducedMotion.matches ? "auto" : "smooth"
       });
     };
 
     previous.addEventListener("click", () => goToSlide(activeIndex - 1));
     next.addEventListener("click", () => goToSlide(activeIndex + 1));
-    viewport.addEventListener("scroll", () => window.requestAnimationFrame(updateControls), { passive: true });
+    viewport.addEventListener("scroll", () => {
+      if (scrollFrame) return;
+      scrollFrame = window.requestAnimationFrame(() => {
+        scrollFrame = 0;
+        updateControls();
+      });
+    }, { passive: true });
     viewport.addEventListener("keydown", (event) => {
       if (event.key === "ArrowRight") {
         event.preventDefault();
