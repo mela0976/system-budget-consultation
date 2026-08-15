@@ -18,13 +18,16 @@ test("GA4 is loaded with the configured measurement ID on public pages", () => {
 
 test("lead-form analytics tracks only anonymous milestones", () => {
   assert.match(app, /const trackAnalyticsEvent = \(name, parameters = \{\}\) =>/);
-  assert.match(app, /trackAnalyticsEvent\("intake_opened", \{ source, selected_budget:/);
+  assert.match(app, /trackAnalyticsEvent\("intake_opened", \{ cta_source: source, selected_budget:/);
+  assert.match(app, /trackAnalyticsEvent\("form_step_completed", \{ form_name: "需求健檢", form_step: currentStep \+ 1 \}\)/);
+  assert.match(app, /trackAnalyticsEvent\("lead_submit_failed", \{ form_name: "需求健檢", failure_type:/);
   assert.match(app, /trackAnalyticsEvent\("generate_lead", \{ form_name: "需求健檢" \}\)/);
   assert.ok(app.indexOf('trackAnalyticsEvent("generate_lead"') > app.indexOf('if (status === "error")'));
   const eventCalls = app.match(/trackAnalyticsEvent\("[^;]+?\);/g) || [];
   eventCalls.forEach((eventCall) => {
     assert.doesNotMatch(eventCall, /\b(?:email|phone|lineId|company|message)\b/i);
   });
+  assert.doesNotMatch(app, /\{ source, selected_budget:/);
 });
 
 test("privacy notice discloses Google Analytics usage", () => {

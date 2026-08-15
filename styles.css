@@ -41,6 +41,16 @@ small { font-size: 16px; }
 .skip-link { position: fixed; top: 8px; left: 8px; z-index: 1000; padding: 10px 14px; color: #fff; background: var(--ink); transform: translateY(-150%); }
 .skip-link:focus { transform: translateY(0); }
 
+.consent-banner { position: fixed; right: 20px; bottom: 20px; z-index: 100; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 25px; align-items: end; width: min(720px, calc(100% - 40px)); padding: 23px; border: 1px solid #b8c7d1; border-radius: 16px; background: rgba(255,255,255,.97); box-shadow: 0 22px 68px rgba(16,24,40,.24); backdrop-filter: blur(16px); }
+.consent-kicker { margin: 0 0 5px; color: var(--blue); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+.consent-banner h2 { margin: 0; font-family: var(--display); font-size: 26px; line-height: 1.2; }
+.consent-banner h2 + p { max-width: 440px; margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+.consent-banner a { color: var(--blue); font-weight: 800; }
+.consent-actions { display: grid; gap: 8px; min-width: 166px; }
+.consent-actions .button { min-height: 42px; padding: 9px 12px; box-shadow: none; font-size: 14px; }
+.consent-minimal { min-height: 42px; padding: 9px 12px; border: 1px solid #c6d0d8; border-radius: 9px; color: var(--blue-dark); background: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
+.privacy-consent-button { margin-top: 15px; padding: 10px 13px; border: 1px solid var(--blue); border-radius: 8px; color: var(--blue); background: #fff; font-weight: 800; cursor: pointer; }
+
 .site-header { position: sticky; top: 0; z-index: 50; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; width: min(1220px, calc(100% - 40px)); margin: 18px auto 0; padding: 10px 12px 10px 18px; border: 1px solid rgba(217,225,239,.9); border-radius: 16px; background: rgba(255,255,255,.9); backdrop-filter: blur(18px); transition: box-shadow .25s ease, background .25s ease; }
 .motion-ready .site-header { animation: header-in .7s .08s var(--ease-out) both; }
 .site-header.is-scrolled { background: rgba(255,255,255,.94); box-shadow: 0 10px 34px rgba(30,48,92,.1); }
@@ -493,6 +503,8 @@ input:user-invalid, textarea:user-invalid, select:user-invalid { border-color: v
 }
 
 @media (max-width: 700px) {
+  .consent-banner { right: 14px; bottom: 14px; grid-template-columns: 1fr; gap: 16px; width: calc(100% - 28px); padding: 19px; }
+  .consent-actions { grid-template-columns: 1fr 1fr; min-width: 0; }
   .site-header { width: calc(100% - 24px); margin-top: 10px; padding-left: 12px; }
   .site-header .brand small { display: none; }
   .site-header > .button { min-height: 42px; padding: 8px 10px; font-size: 16px; }

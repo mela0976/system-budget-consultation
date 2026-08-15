@@ -130,7 +130,7 @@
     document.querySelector("#form-started-at").value = String(Date.now());
     document.querySelector("#lead-id").value = createLeadId();
     dialog.showModal();
-    trackAnalyticsEvent("intake_opened", { source, selected_budget: budget || "not_selected" });
+    trackAnalyticsEvent("intake_opened", { cta_source: source, selected_budget: budget || "not_selected" });
     window.setTimeout(() => steps[0].querySelector("input")?.focus(), 120);
   };
 
@@ -177,6 +177,7 @@
 
   nextButton.addEventListener("click", () => {
     if (!validateStep()) return;
+    trackAnalyticsEvent("form_step_completed", { form_name: "需求健檢", form_step: currentStep + 1 });
     showStep(currentStep + 1);
   });
   prevButton.addEventListener("click", () => showStep(currentStep - 1));
@@ -204,6 +205,7 @@
     }
     if (!config.formEndpoint) {
       errorBox.textContent = "通知服務尚未完成設定，請網站管理者先填入 Apps Script 網址。";
+      trackAnalyticsEvent("lead_submit_failed", { form_name: "需求健檢", failure_type: "endpoint" });
       return;
     }
 
@@ -220,7 +222,7 @@
     form.submit();
     submissionTimer = window.setTimeout(() => {
       if (submissionPending) {
-        handleSubmissionResult("error", "通知服務回覆逾時，尚未確認送達。請稍後再試，或改用其他聯絡方式。");
+        handleSubmissionResult("error", "通知服務回覆逾時，尚未確認送達。請稍後再試，或改用其他聯絡方式。", "timeout");
       }
     }, 15000);
   });
@@ -229,10 +231,10 @@
     const data = event.data || {};
     const expectedLeadId = form.elements.leadId.value;
     if (!submissionPending || data.source !== "mela-inquiry" || data.leadId !== expectedLeadId) return;
-    handleSubmissionResult(data.status, data.message);
+    handleSubmissionResult(data.status, data.message, data.status === "error" ? "endpoint" : "");
   });
 
-  function handleSubmissionResult(status, message = "") {
+  function handleSubmissionResult(status, message = "", failureType = "") {
     window.clearTimeout(submissionTimer);
     submissionPending = false;
     submitButton.disabled = false;
@@ -240,6 +242,7 @@
 
     if (status === "error") {
       errorBox.textContent = message || "送出時發生問題，請稍後再試。";
+      trackAnalyticsEvent("lead_submit_failed", { form_name: "需求健檢", failure_type: failureType || "endpoint" });
       return;
     }
     steps.forEach((step) => { step.hidden = true; });

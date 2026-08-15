@@ -9,24 +9,36 @@
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#2448e8">
   <title>MELA 系統需求健檢｜網站、AI 系統與企業資料整合</title>
+  <script src="consent.js?v=20260815-2"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-M7FS6MWSKK"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag("js", new Date());
-    gtag("config", "G-M7FS6MWSKK", {
+    window.gtag("js", new Date());
+    window.gtag("config", "G-M7FS6MWSKK", {
+      send_page_view: false,
       allow_google_signals: false,
       allow_ad_personalization_signals: false
     });
+    window.MELA_ANALYTICS_CONSENT.trackSanitizedPageView();
   </script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chiron+Hei+HK:wght@400;500;600;700;800&amp;family=LXGW+WenKai+TC:wght@400;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815-1">
+  <link rel="stylesheet" href="styles.css?v=20260815-2">
 </head>
 <body>
   <a class="skip-link" href="#main">跳到主要內容</a>
+  <section class="consent-banner" data-consent-banner hidden role="region" aria-label="網站分析與隱私設定" aria-live="polite" aria-atomic="true" aria-describedby="consent-copy">
+    <div>
+      <p class="consent-kicker">PRIVACY CHOICE</p>
+      <h2 id="consent-title" data-consent-title>要允許網站使用分析嗎？</h2>
+      <p id="consent-copy" data-consent-copy>我們使用 GA4 了解哪些內容與需求健檢流程有幫助。未同意前不會寫入 Analytics Cookie；因採用進階同意模式，仍可能傳送不含 Cookie 的評估訊號。廣告相關儲存與個人化一律不會啟用。<a href="privacy.html#analytics-consent">了解分析與隱私設定</a></p>
+    </div>
+    <div class="consent-actions">
+      <button type="button" class="consent-minimal" data-consent-action="denied">只使用必要功能</button>
+      <button type="button" class="button" data-consent-action="granted">允許分析 Cookie</button>
+    </div>
+  </section>
 
   <header class="site-header" data-header>
     <a class="brand" href="#top" aria-label="MELA 系統顧問首頁">
@@ -443,7 +455,7 @@
   <footer>
     <a class="brand brand-footer" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span><b>MELA</b><small>系統顧問</small></span></a>
     <p>網站、AI 系統、CRM、數據中台與儀表板的第一版規劃。</p>
-    <div><a href="privacy.html">隱私與資料使用</a><button class="footer-button js-open-intake" type="button">需求健檢</button></div>
+    <div><a href="privacy.html">隱私與資料使用</a><button class="footer-button" type="button" data-open-consent-settings>隱私設定</button><button class="footer-button js-open-intake" type="button">需求健檢</button></div>
     <small>© <span data-year></span> MELA System Advisory.</small>
   </footer>
 
@@ -582,6 +594,6 @@
   </dialog>
 
   <script src="config.js?v=20260815-1"></script>
-  <script src="app.js?v=20260815-2" defer></script>
+  <script src="app.js?v=20260815-3" defer></script>
 </body>
 </html>
