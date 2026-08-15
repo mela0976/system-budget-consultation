@@ -5,6 +5,18 @@
   const allowedChoices = new Set(["granted", "denied"]);
   let lastFocusedElement = null;
 
+  function clearAnalyticsCookies() {
+    if (typeof document === "undefined" || typeof document.cookie !== "string") return;
+    const cookieNames = document.cookie
+      .split(";")
+      .map((cookie) => cookie.trim().split("=")[0])
+      .filter((name) => name === "_ga" || name.startsWith("_ga_"));
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    cookieNames.forEach((name) => {
+      document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax${secure}`;
+    });
+  }
+
   const readChoice = () => {
     try {
       const value = window.localStorage.getItem(CONSENT_KEY);
@@ -15,6 +27,7 @@
   };
 
   const savedChoice = readChoice();
+  if (savedChoice !== "granted") clearAnalyticsCookies();
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
 
@@ -29,12 +42,18 @@
   window.gtag("consent", "default", defaultConsent);
   window.gtag("set", "ads_data_redaction", true);
 
-  function trackSanitizedPageView() {
-    const safePageLocation = `${window.location.origin}${window.location.pathname}`;
-    window.gtag("event", "page_view", {
-      page_location: safePageLocation,
+  function getSafePageContext() {
+    return {
+      page_location: `${window.location.origin}${window.location.pathname}`,
       page_referrer: ""
-    });
+    };
+  }
+
+  // `set` makes the safe page context apply to every later GA4 event, including form milestones.
+  window.gtag("set", getSafePageContext());
+
+  function trackSanitizedPageView() {
+    window.gtag("event", "page_view", getSafePageContext());
   }
 
   function updateConsent(choice) {
@@ -45,6 +64,7 @@
       ad_personalization: "denied",
       analytics_storage: choice === "granted" ? "granted" : "denied"
     });
+    if (choice === "denied") clearAnalyticsCookies();
     try {
       window.localStorage.setItem(CONSENT_KEY, choice);
     } catch {

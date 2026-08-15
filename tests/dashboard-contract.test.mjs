@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   calculateMarketingMetrics,
   generateMarketingRecommendations,
+  RACE_THRESHOLDS,
   saveDashboardData,
   validateDashboardData
 } from "../dashboard.js";
@@ -46,6 +47,13 @@ test("dashboard metrics calculate the lead-generation funnel from GA4 and CRM ag
   assert.equal(metrics.topSource.name, "自然搜尋");
 });
 
+test("RACE recommendation thresholds are named policy settings", () => {
+  assert.equal(RACE_THRESHOLDS.sourceCoverage, 0.8);
+  assert.equal(RACE_THRESHOLDS.sourceConcentration, 0.75);
+  assert.equal(RACE_THRESHOLDS.formCompletionRate, 0.35);
+  assert.equal(RACE_THRESHOLDS.responseWithinOneDayRate, 0.8);
+});
+
 test("recommendations prioritize the tightest RACE bottleneck and give an action", () => {
   const data = {
     sessions: 240,
@@ -69,8 +77,33 @@ test("recommendations prioritize the tightest RACE bottleneck and give an action
   recommendations.cards.forEach((card) => assert.ok(card.action.length > 0));
 });
 
+test("zero form starts are diagnosed as an Act CTA problem, not a Convert form problem", () => {
+  const data = {
+    sessions: 200,
+    activeUsers: 160,
+    returningUsers: 32,
+    engagedSessions: 130,
+    intakeOpened: 0,
+    leads: 0,
+    qualifiedLeads: 0,
+    respondedWithinOneDay: 0,
+    organicSessions: 100,
+    referralSessions: 60,
+    socialSessions: 30,
+    paidSessions: 10
+  };
+  const recommendations = generateMarketingRecommendations(data);
+  const convertCard = recommendations.cards.find((card) => card.stage === "Convert");
+
+  assert.equal(recommendations.priority.stage, "Act");
+  assert.match(convertCard.title, /還沒有足夠表單啟動/);
+  assert.doesNotMatch(convertCard.title, /有人打開表單/);
+});
+
 test("dashboard copy makes the browser-local data boundary explicit", () => {
   assert.match(dashboard, /只儲存在這台裝置/);
+  assert.match(dashboard, /手動更新的本機週檢表/);
+  assert.match(dashboard, /不會自動讀取 GA4/);
   assert.match(dashboard, /intake_opened/);
   assert.match(dashboard, /form_step_completed/);
   assert.match(dashboard, /lead_submit_failed/);

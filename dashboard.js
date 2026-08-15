@@ -29,6 +29,19 @@ export const SAMPLE_DASHBOARD_DATA = Object.freeze({
 });
 
 const stageOrder = ["Reach", "Act", "Convert", "Engage"];
+export const RACE_THRESHOLDS = Object.freeze({
+  directionalSessions: 30,
+  stableLearningSessions: 100,
+  sourceCoverage: 0.8,
+  sourceConcentration: 0.75,
+  returningUserRate: 0.15,
+  engagementRate: 0.55,
+  ctaRate: 0.03,
+  formCompletionRate: 0.35,
+  leadConversionRate: 0.01,
+  responseWithinOneDayRate: 0.8,
+  qualifiedLeadRate: 0.4
+});
 
 const asNumber = (value) => {
   const parsed = Number(value);
@@ -89,7 +102,7 @@ export function calculateMarketingMetrics(rawData) {
   const hasSourceData = identifiedSources > 0;
   const sourceCoverage = data.sessions > 0 ? boundedRatio(identifiedSources, data.sessions) || 0 : null;
   const hasSourceTotalIssue = dataQuality.issues.some((issue) => issue.code === "identified-sources-exceed-sessions");
-  const canAssessSourceMix = hasSourceData && !hasSourceTotalIssue && (sourceCoverage || 0) >= 0.8;
+  const canAssessSourceMix = hasSourceData && !hasSourceTotalIssue && (sourceCoverage || 0) >= RACE_THRESHOLDS.sourceCoverage;
   const sourceRows = hasSourceData
     ? sourceDefinitions.map((source) => ({ ...source, value: data[source.field] }))
     : [];
@@ -160,13 +173,13 @@ export function generateMarketingRecommendations(rawData, metrics = calculateMar
       isDataQualityFallback: true
     };
   }
-  if (data.sessions < 30) {
+  if (data.sessions < RACE_THRESHOLDS.directionalSessions) {
     const cards = stageOrder.map((stage) => ({
       stage,
       score: stage === "Reach" ? 4 : 0,
       status: stage === "Reach" ? "先收集樣本" : "等待樣本",
       title: stage === "Reach" ? "先讓網站有可判讀的流量" : "先不要過早下結論",
-      diagnosis: stage === "Reach" ? "本期工作階段少於 30，任何百分比都容易被少量行為放大。" : "先累積足夠的 GA4 與商機資料，再判斷這一段的真正瓶頸。",
+      diagnosis: stage === "Reach" ? `本期工作階段少於 ${RACE_THRESHOLDS.directionalSessions}，任何百分比都容易被少量行為放大。` : "先累積足夠的 GA4 與商機資料，再判斷這一段的真正瓶頸。",
       action: stage === "Reach" ? "本週只選一個明確受眾與一個問題型內容主題，建立固定的發布與導流節奏。" : "先完成 Reach 的基礎資料，再安排這一段的優化實驗。",
       target: "成功訊號：連續 2 週都有足以比較的流量與事件資料。"
     }));
@@ -174,54 +187,58 @@ export function generateMarketingRecommendations(rawData, metrics = calculateMar
   }
 
   const sourceConcentration = metrics.canAssessSourceMix ? metrics.topSource.share || 0 : 0;
-  const reachScore = (data.sessions < 100 ? 2 : 0) + (sourceConcentration > 0.75 ? 2 : 0) + (!metrics.hasSourceData ? 1 : 0) + ((metrics.returningUserRate || 0) < 0.15 ? 1 : 0);
-  const actScore = ((metrics.engagementRate || 0) < 0.55 ? 2 : 0) + ((metrics.ctaRate || 0) < 0.03 ? 2 : 0);
-  const convertScore = (data.leads === 0 ? 3 : 0) + (data.intakeOpened > 0 && (metrics.formCompletionRate || 0) < 0.35 ? 3 : 0) + ((metrics.leadConversionRate || 0) < 0.01 ? 1 : 0);
-  const engageScore = (data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < 0.8 ? 2 : 0) + (data.leads > 0 && (metrics.qualifiedLeadRate || 0) < 0.4 ? 2 : 0) + ((metrics.returningUserRate || 0) < 0.15 ? 1 : 0);
+  const reachScore = (data.sessions < RACE_THRESHOLDS.stableLearningSessions ? 2 : 0) + (sourceConcentration > RACE_THRESHOLDS.sourceConcentration ? 2 : 0) + (!metrics.hasSourceData ? 1 : 0) + ((metrics.returningUserRate || 0) < RACE_THRESHOLDS.returningUserRate ? 1 : 0);
+  const actScore = ((metrics.engagementRate || 0) < RACE_THRESHOLDS.engagementRate ? 2 : 0) + ((metrics.ctaRate || 0) < RACE_THRESHOLDS.ctaRate ? 2 : 0);
+  const convertScore = (data.intakeOpened > 0 && data.leads === 0 ? 3 : 0) + (data.intakeOpened > 0 && (metrics.formCompletionRate || 0) < RACE_THRESHOLDS.formCompletionRate ? 3 : 0) + ((metrics.leadConversionRate || 0) < RACE_THRESHOLDS.leadConversionRate ? 1 : 0);
+  const engageScore = (data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < RACE_THRESHOLDS.responseWithinOneDayRate ? 2 : 0) + (data.leads > 0 && (metrics.qualifiedLeadRate || 0) < RACE_THRESHOLDS.qualifiedLeadRate ? 2 : 0) + ((metrics.returningUserRate || 0) < RACE_THRESHOLDS.returningUserRate ? 1 : 0);
 
   const cards = [
     {
       stage: "Reach", score: reachScore, status: statusFor(reachScore),
-      title: !metrics.hasSourceData ? "尚未填寫來源，先補資料再決定分散投資" : !metrics.canAssessSourceMix ? "來源覆蓋不足，先補齊再比較" : sourceConcentration > 0.75 ? "流量太依賴單一入口" : data.sessions < 100 ? "流量基礎還不足以穩定學習" : "流量基礎可開始做來源取捨",
+      title: !metrics.hasSourceData ? "尚未填寫來源，先補資料再決定分散投資" : !metrics.canAssessSourceMix ? "來源覆蓋不足，先補齊再比較" : sourceConcentration > RACE_THRESHOLDS.sourceConcentration ? "流量太依賴單一入口" : data.sessions < RACE_THRESHOLDS.stableLearningSessions ? "流量基礎還不足以穩定學習" : "流量基礎可開始做來源取捨",
       diagnosis: !metrics.hasSourceData
         ? "尚未填寫可辨識來源，因此無法判斷流量是否集中。"
         : !metrics.canAssessSourceMix
-          ? `目前可辨識來源只覆蓋 ${formatPercent(metrics.sourceCoverage)} 的工作階段；先補齊至少 80% 的來源，再比較集中度。`
-          : sourceConcentration > 0.75
+          ? `目前可辨識來源只覆蓋 ${formatPercent(metrics.sourceCoverage)} 的工作階段；先補齊至少 ${formatPercent(RACE_THRESHOLDS.sourceCoverage)} 的來源，再比較集中度。`
+          : sourceConcentration > RACE_THRESHOLDS.sourceConcentration
         ? `${metrics.topSource.name} 佔 ${formatPercent(sourceConcentration)}，一個來源波動就可能讓詢問量明顯起伏。`
-        : `本期 ${formatNumber(data.sessions)} 個工作階段；${data.sessions < 100 ? "先建立可重複的導流節奏，再放大投資。" : "可比較不同來源帶來的意圖品質。"}`,
+        : `本期 ${formatNumber(data.sessions)} 個工作階段；${data.sessions < RACE_THRESHOLDS.stableLearningSessions ? "先建立可重複的導流節奏，再放大投資。" : "可比較不同來源帶來的意圖品質。"}`,
       action: !metrics.hasSourceData || !metrics.canAssessSourceMix
-        ? "從 GA4 的預設管道群組補上同一期間的來源工作階段；覆蓋至少 80% 後，再決定是否要分散投資。"
-        : sourceConcentration > 0.75
+        ? `從已確認且不含個資的來源彙總，補上同一期間的來源工作階段；覆蓋至少 ${formatPercent(RACE_THRESHOLDS.sourceCoverage)} 後，再決定是否要分散投資。`
+        : sourceConcentration > RACE_THRESHOLDS.sourceConcentration
         ? "保留目前最有效來源，同時安排一個第二來源實驗：合作露出、問題型搜尋內容或專業社群，三者只選一種。"
         : "把前兩名來源各自帶來的開啟健檢率列出；下週只加碼效率較高的一個來源。",
       target: "成功訊號：前兩名來源都能帶來可追蹤的健檢開啟，而非只有瀏覽。"
     },
     {
       stage: "Act", score: actScore, status: statusFor(actScore),
-      title: (metrics.ctaRate || 0) < 0.03 ? "訪客看完，卻沒有走向需求健檢" : (metrics.engagementRate || 0) < 0.55 ? "首頁訊息與受眾還沒對準" : "內容有把一部分訪客推向下一步",
-      diagnosis: `互動率 ${formatPercent(metrics.engagementRate)}；健檢開啟率 ${formatPercent(metrics.ctaRate)}。${(metrics.ctaRate || 0) < 0.03 ? "意圖沒有被 CTA 接住。" : "可把焦點放在最能帶動開啟的說法。"}`,
-      action: (metrics.ctaRate || 0) < 0.03
+      title: (metrics.ctaRate || 0) < RACE_THRESHOLDS.ctaRate ? "訪客看完，卻沒有走向需求健檢" : (metrics.engagementRate || 0) < RACE_THRESHOLDS.engagementRate ? "首頁訊息與受眾還沒對準" : "內容有把一部分訪客推向下一步",
+      diagnosis: `互動率 ${formatPercent(metrics.engagementRate)}；健檢開啟率 ${formatPercent(metrics.ctaRate)}。${(metrics.ctaRate || 0) < RACE_THRESHOLDS.ctaRate ? "意圖沒有被 CTA 接住。" : "可把焦點放在最能帶動開啟的說法。"}`,
+      action: (metrics.ctaRate || 0) < RACE_THRESHOLDS.ctaRate
         ? "只測一個首頁變化：把首屏主張改成「誰的哪個工作問題能改善」，並讓『開始需求健檢』成為唯一主要動作。"
         : "找出帶來最多健檢開啟的內容或來源，將它的問題描述、案例證據與 CTA 複製到其他入口。",
       target: "成功訊號：下一期健檢開啟率上升，且互動率沒有下降。"
     },
     {
       stage: "Convert", score: convertScore, status: statusFor(convertScore),
-      title: data.leads === 0 ? "有人打開表單，但沒有留下有效詢問" : (metrics.formCompletionRate || 0) < 0.35 ? "表單開啟後流失是最大的漏點" : "詢問漏斗正在形成可優化的基線",
-      diagnosis: `開啟健檢 ${formatNumber(data.intakeOpened)} 次，成功送出 ${formatNumber(data.leads)} 次，完成率 ${formatPercent(metrics.formCompletionRate)}。`,
-      action: data.leads === 0 || (metrics.formCompletionRate || 0) < 0.35
+      title: data.intakeOpened === 0 ? "還沒有足夠表單啟動來判斷轉換" : data.leads === 0 ? "有人打開表單，但沒有留下有效詢問" : (metrics.formCompletionRate || 0) < RACE_THRESHOLDS.formCompletionRate ? "表單開啟後流失是最大的漏點" : "詢問漏斗正在形成可優化的基線",
+      diagnosis: data.intakeOpened === 0
+        ? "目前還沒有訪客開啟需求健檢；先把焦點放在首頁訊息與 CTA，再檢查表單本身。"
+        : `開啟健檢 ${formatNumber(data.intakeOpened)} 次，成功送出 ${formatNumber(data.leads)} 次，完成率 ${formatPercent(metrics.formCompletionRate)}。`,
+      action: data.intakeOpened === 0
+        ? "先執行 Act 的 CTA 實驗：把『開始需求健檢』放在客戶問題與可得到結果之後，並清楚說明只需 2 分鐘。"
+        : data.leads === 0 || (metrics.formCompletionRate || 0) < RACE_THRESHOLDS.formCompletionRate
         ? "本週只做一個表單實驗：把第一步的選項文案改得更貼近客戶說法，並確認手機上不用捲動就能看見『下一步』。"
         : "檢查高意圖來源帶來的詢問率；將成效最佳來源導向最貼近其問題的方案段落。",
       target: "成功訊號：表單完成率提高，且成功送出需求不是由重複點擊造成。"
     },
     {
       stage: "Engage", score: engageScore, status: statusFor(engageScore),
-      title: data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < 0.8 ? "詢問進來後，回覆速度還沒穩定" : data.leads > 0 && (metrics.qualifiedLeadRate || 0) < 0.4 ? "詢問量存在，但合格名單比例偏低" : "跟進品質已能支撐下一輪流量投資",
+      title: data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < RACE_THRESHOLDS.responseWithinOneDayRate ? "詢問進來後，回覆速度還沒穩定" : data.leads > 0 && (metrics.qualifiedLeadRate || 0) < RACE_THRESHOLDS.qualifiedLeadRate ? "詢問量存在，但合格名單比例偏低" : "跟進品質已能支撐下一輪流量投資",
       diagnosis: `合格率 ${formatPercent(metrics.qualifiedLeadRate)}；1 個工作天內回覆率 ${formatPercent(metrics.responseWithinOneDayRate)}；回訪使用者率 ${formatPercent(metrics.returningUserRate)}。`,
-      action: data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < 0.8
+      action: data.leads > 0 && (metrics.responseWithinOneDayRate || 0) < RACE_THRESHOLDS.responseWithinOneDayRate
         ? "建立一個最小 SLA：新詢問先在 1 個工作天內回覆『已收到＋下一步』，再安排完整需求確認。"
-        : data.leads > 0 && (metrics.qualifiedLeadRate || 0) < 0.4
+        : data.leads > 0 && (metrics.qualifiedLeadRate || 0) < RACE_THRESHOLDS.qualifiedLeadRate
           ? "在健檢前加上一句範圍與預算起點，讓不適合的期待提早自我篩選。"
           : "每週挑一個已合格需求回看來源與內容，整理成可匿名使用的案例或 FAQ，累積下一次觸及的信任。",
       target: "成功訊號：所有新詢問都有首次回覆時間，並可辨識是否為合格商機。"
@@ -326,7 +343,7 @@ function renderSources(metrics) {
   list.replaceChildren();
   const sourceDataHasIssue = metrics.dataQuality.issues.some((issue) => issue.code === "identified-sources-exceed-sessions");
   if (!metrics.hasSourceData) {
-    setText("[data-source-note]", "尚未填寫可辨識來源，因此不知道流量是否集中；請從 GA4 的預設管道群組補上同一期間的工作階段。");
+    setText("[data-source-note]", "尚未填寫可辨識來源，因此不知道流量是否集中；請填入同一期間、已確認且不含個資的來源彙總。 ");
     return;
   }
   if (sourceDataHasIssue) {
@@ -350,8 +367,8 @@ function renderSources(metrics) {
     list.append(item);
   });
   const note = !metrics.canAssessSourceMix
-    ? `目前可辨識來源覆蓋 ${formatPercent(metrics.sourceCoverage)} 的工作階段；覆蓋至少 80% 前，不判定流量集中度。`
-    : `目前最大來源是「${metrics.topSource.name}」（${formatPercent(metrics.topSource.share)}）。${(metrics.topSource.share || 0) > 0.75 ? "來源過度集中，值得安排第二入口實驗。" : "來源結構可開始比較哪一個帶來較高意圖。"}`;
+    ? `目前可辨識來源覆蓋 ${formatPercent(metrics.sourceCoverage)} 的工作階段；覆蓋至少 ${formatPercent(RACE_THRESHOLDS.sourceCoverage)} 前，不判定流量集中度。`
+    : `目前最大來源是「${metrics.topSource.name}」（${formatPercent(metrics.topSource.share)}）。${(metrics.topSource.share || 0) > RACE_THRESHOLDS.sourceConcentration ? "來源過度集中，值得安排第二入口實驗。" : "來源結構可開始比較哪一個帶來較高意圖。"}`;
   setText("[data-source-note]", note);
 }
 
@@ -367,6 +384,9 @@ function renderDashboard(data) {
     dataQualityAlert.textContent = hasDataQualityIssue ? `資料待校正：${metrics.dataQuality.issues.map((issue) => issue.message).join(" ")}` : "";
   }
   setText("[data-period-label]", data.periodLabel || "未命名期間");
+  document.querySelectorAll("[data-source-coverage-target]").forEach((element) => {
+    element.textContent = formatPercent(RACE_THRESHOLDS.sourceCoverage);
+  });
   setText("[data-dataset-detail]", hasDataQualityIssue ? "資料待校正・暫不建立行銷診斷" : data.isSample ? "示範資料，尚未連線真實 GA4" : "這台裝置已儲存的資料・未公開傳送");
   setText('[data-metric="sessions"]', formatNumber(data.sessions));
   setText('[data-metric="engagementRate"]', hasDataQualityIssue ? "—" : formatPercent(metrics.engagementRate));

@@ -7,9 +7,9 @@
   --grid: rgba(55, 73, 87, 0.065);
   --blue: #376b83;
   --blue-dark: #244b60;
-  --teal: #5d8c7b;
-  --orange: #ba765b;
-  --purple: #877595;
+  --teal: #35725f;
+  --orange: #9b533d;
+  --purple: #6f5b7e;
   --yellow: #e4c489;
   --danger: #c43333;
   --shadow: 0 24px 70px rgba(24, 43, 90, 0.14);
@@ -108,7 +108,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .map-node span { color: var(--muted); font-size: 16px; }
 .node-idea { top: 12%; left: 4%; }
 .node-scope { top: 39%; left: 39%; border-color: var(--blue); color: #fff; background: var(--blue); }
-.node-scope small, .node-scope span { color: rgba(255,255,255,.8); }
+.node-scope small, .node-scope span { color: #fff; }
 .node-build { top: 39%; right: 3%; }
 .node-grow { bottom: 8%; left: 10%; }
 .map-stamp { position: absolute; right: 5%; bottom: 8%; padding: 12px 14px; border: 2px solid var(--orange); color: var(--orange); font-size: 16px; line-height: 1.45; text-align: center; transform: rotate(-4deg); }
@@ -182,14 +182,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .work-copy li::before { content: ""; position: absolute; top: .65em; left: 0; width: 7px; height: 7px; border: 2px solid var(--teal); border-radius: 50%; }
 .work-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; }
 .work-tags span { padding: 6px 10px; border: 1px solid #ccd6d2; border-radius: 99px; color: #64706e; background: #f8faf9; font-size: 16px; white-space: nowrap; }
-.work-note { max-width: 920px; margin: 22px 0 0; color: #737e81; font-size: 16px; }
+.work-note { max-width: 920px; margin: 22px 0 0; color: var(--muted); font-size: 16px; }
 
 /* 作品案例畫面：依實際流程重繪，不載入客戶資料。 */
 .chat-stage { display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; min-height: 320px; padding: 14px; border: 1px solid rgba(16,24,40,.12); border-radius: 0 0 12px 12px; background-color: #dfeae5; background-image: radial-gradient(rgba(55,107,131,.13) 1px, transparent 1px); background-size: 18px 18px; }
 .chat-phone { display: flex; min-width: 0; flex-direction: column; gap: 10px; padding: 12px; border: 1px solid #cdd8d4; border-radius: 15px; background: #fff; box-shadow: 0 12px 24px rgba(46,77,66,.12); }
 .chat-head { display: grid; grid-template-columns: 38px 1fr; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #e7ece9; }
 .chat-head .avatar { grid-row: span 2; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; background: var(--teal); font-family: var(--mono); font-weight: 700; }
-.chat-head small { color: #448067; line-height: 1.1; }
+.chat-head small { color: var(--teal); line-height: 1.1; }
 .chat-bubble { max-width: 90%; padding: 9px 10px; border-radius: 11px; font-size: 16px; line-height: 1.45; }
 .chat-user { align-self: flex-end; color: #fff; background: var(--teal); border-bottom-right-radius: 3px; }
 .chat-ai { align-self: flex-start; color: #34433e; background: #eef3f1; border-bottom-left-radius: 3px; }
@@ -261,7 +261,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .feedback-meta { display: grid; gap: 3px; margin-top: auto; }
 .feedback-meta b { font-size: 16px; }
 .feedback-meta span { color: var(--muted); font-size: 16px; }
-.feedback-note { max-width: 900px; margin: 16px 0 0; color: #7b8581; font-size: 16px; }
+.feedback-note { max-width: 900px; margin: 16px 0 0; color: var(--muted); font-size: 16px; }
 
 .budget-ruler-wrap { padding: 95px max(20px, calc((100vw - 1220px) / 2)); color: var(--ink); background: #f4f6f5; border-top: 1px solid #e3e7e6; border-bottom: 1px solid #e3e7e6; }
 .budget-ruler-wrap .section-intro { display: grid; grid-template-columns: .35fr 1.35fr .7fr; gap: 30px; align-items: end; }
@@ -273,12 +273,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .budget-ruler button { position: relative; display: grid; justify-items: start; padding: 24px 18px 18px 0; border: 0; color: var(--ink); background: transparent; text-align: left; cursor: pointer; }
 .ruler-tick { position: absolute; top: -18px; left: 0; width: 2px; height: 28px; background: var(--blue); transition: height .2s, background .2s; }
 .budget-ruler button:hover .ruler-tick { height: 42px; background: var(--yellow); }
-.budget-ruler small { color: #78868b; font-family: var(--mono); font-size: 16px; letter-spacing: .06em; }
+.budget-ruler small { color: var(--muted); font-family: var(--mono); font-size: 16px; letter-spacing: .06em; }
 .budget-ruler b { margin: 2px 0; font-family: var(--display); font-size: clamp(42px, 5vw, 72px); line-height: 1.05; }
 .budget-ruler b, .budget-choices b, .plan-price, .status { white-space: nowrap; }
 .budget-ruler b em { margin-left: 4px; font-family: var(--body); font-size: 18px; font-style: normal; }
 .budget-ruler button > span:last-child { color: var(--muted); font-size: 16px; }
-.ruler-note { margin: 32px 0 0; color: #7e8990; font-size: 16px; }
+.ruler-note { margin: 32px 0 0; color: var(--muted); font-size: 16px; }
 
 .plans, .process, .faq { width: min(1220px, calc(100% - 40px)); margin: 0 auto; padding: 115px 0; }
 .section-heading { display: grid; grid-template-columns: .35fr 1.35fr .7fr; gap: 30px; align-items: end; margin-bottom: 52px; }
@@ -354,11 +354,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 footer { display: grid; grid-template-columns: .8fr 1fr auto; gap: 40px; align-items: start; padding: 48px max(20px, calc((100vw - 1220px) / 2)); color: var(--muted); background: #fff; border-top: 1px solid #dfe5e2; font-size: 16px; }
 footer .brand { color: var(--ink); }
-footer .brand small { color: #8792a5; }
+footer .brand small { color: var(--muted); }
 footer p { margin: 0; }
 footer > div { display: flex; gap: 20px; }
 footer > div a, .footer-button { color: var(--muted); background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
-footer > small { grid-column: 1 / -1; color: #6f7a8f; font-family: var(--mono); }
+footer > small { grid-column: 1 / -1; color: var(--muted); font-family: var(--mono); }
 
 .intake-dialog { width: min(954px, calc(100% - 32px)); max-width: none; height: min(792px, calc(100vh - 32px)); max-height: min(792px, calc(100vh - 32px)); padding: 0; border: 0; border-radius: 20px; background: #fff; box-shadow: 0 30px 100px rgba(3, 12, 35, .34); overflow: hidden; }
 .intake-dialog::backdrop { background: rgba(10, 20, 44, .72); backdrop-filter: blur(7px); }

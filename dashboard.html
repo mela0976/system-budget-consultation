@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chiron+Hei+HK:wght@400;500;600;700;800&amp;family=LXGW+WenKai+TC:wght@400;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260815-2">
+  <link rel="stylesheet" href="styles.css?v=20260815-3">
   <link rel="stylesheet" href="dashboard.css?v=20260815-1">
 </head>
 <body class="dashboard-page">
@@ -30,7 +30,7 @@
       <div class="dashboard-hero-copy">
         <p class="eyebrow"><span></span>MARKETING OPERATING SYSTEM</p>
         <h1 id="dashboard-title">把流量，<em>量成下一個動作。</em></h1>
-        <p>這是本機工作區，不是有帳號保護的線上後台；共用這個瀏覽器設定檔的人都可能看到已儲存的匯總資料。它讓你每週決定「下一筆時間該投在哪裡」：以 <a href="https://www.smartinsights.com/digital-marketing-strategy/race-a-practical-framework-to-improve-your-marketing/" target="_blank" rel="noopener noreferrer">Dr. Dave Chaffey 的 RACE 框架</a>，檢查觸及、互動、轉換與跟進是否連成一條順暢動線。</p>
+        <p>這是手動更新的本機週檢表，不會自動讀取 GA4，也不是有帳號保護的線上後台；共用這個瀏覽器設定檔的人都可能看到已儲存的匯總資料。它讓你每週決定「下一筆時間該投在哪裡」：以 <a href="https://www.smartinsights.com/digital-marketing-strategy/race-a-practical-framework-to-improve-your-marketing/" target="_blank" rel="noopener noreferrer">Dr. Dave Chaffey 的 RACE 框架</a>，檢查觸及、互動、轉換與跟進是否連成一條順暢動線。</p>
       </div>
       <div class="dashboard-hero-actions">
         <div class="dataset-state" data-dataset-state>
@@ -81,7 +81,7 @@
           </fieldset>
           <fieldset class="source-inputs">
             <legend><b>03</b> 可辨識流量來源</legend>
-            <p>選填：從 GA4 預設管道群組或來源／媒介填入同一期間的工作階段；至少覆蓋 80% 才會判讀是否集中。未填部分會顯示為「其他／未分類」。</p>
+            <p>選填：填入同一期間、已確認且不含個資的來源彙總；至少覆蓋 <span data-source-coverage-target>80%</span> 才會判讀是否集中。未填部分會顯示為「其他／未分類」。</p>
             <div class="input-grid source-grid">
               <label><span>自然搜尋</span><input name="organicSessions" type="number" min="0" inputmode="numeric"></label>
               <label><span>推薦連結</span><input name="referralSessions" type="number" min="0" inputmode="numeric"></label>
@@ -138,7 +138,7 @@
     </section>
 
     <section class="source-section" aria-labelledby="source-title">
-      <div class="source-copy"><p class="eyebrow">REACH MIX</p><h2 id="source-title">不要只問流量多不多；要問它從哪裡來。</h2><p>來源若過度集中，任何一個平台或合作夥伴的波動都會直接影響詢問。先確認來源至少覆蓋 80% 工作階段，再用來源結構決定內容、合作與推廣要不要分散投資。</p><p class="source-note" data-source-note>選填來源資料後，這裡會顯示來源覆蓋與集中度。</p></div>
+      <div class="source-copy"><p class="eyebrow">REACH MIX</p><h2 id="source-title">不要只問流量多不多；要問它從哪裡來。</h2><p>這是手動週檢表：先確認已驗證的來源至少覆蓋 <span data-source-coverage-target>80%</span> 工作階段，再用來源結構決定內容、合作與推廣要不要分散投資。</p><p class="source-note" data-source-note>選填來源資料後，這裡會顯示來源覆蓋與集中度。</p></div>
       <ol class="source-list" data-source-list aria-label="流量來源分布"></ol>
     </section>
 
@@ -153,8 +153,8 @@
     </section>
   </main>
 
-  <footer class="dashboard-footer"><span>MELA GROWTH ROOM</span><p>資料口徑：GA4 匿名行為 + 你的 CRM／Google Sheet 營運匯總。</p><a href="privacy.html">資料使用說明</a></footer>
+  <footer class="dashboard-footer"><span>MELA GROWTH ROOM</span><p>資料口徑：手動填入的 GA4 去識別行為彙總 + CRM／Google Sheet 營運匯總。</p><a href="privacy.html">資料使用說明</a></footer>
 
-  <script type="module" src="dashboard.js?v=20260815-1"></script>
+  <script type="module" src="dashboard.js?v=20260815-2"></script>
 </body>
 </html>
