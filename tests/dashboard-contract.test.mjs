@@ -11,6 +11,7 @@ import {
 
 const dashboard = readFileSync(new URL("../dashboard.html", import.meta.url), "utf8");
 const dashboardScript = readFileSync(new URL("../dashboard.js", import.meta.url), "utf8");
+const dashboardStyles = readFileSync(new URL("../dashboard.css", import.meta.url), "utf8");
 
 test("the private dashboard follows the RACE marketing framework without loading GA tracking", () => {
   assert.match(dashboard, /Reach/);
@@ -19,6 +20,12 @@ test("the private dashboard follows the RACE marketing framework without loading
   assert.match(dashboard, /Engage/);
   assert.match(dashboard, /Dave Chaffey/);
   assert.doesNotMatch(dashboard, /googletagmanager\.com|G-M7FS6MWSKK/);
+});
+
+test("dashboard brand lets its visible name remain the accessible link name", () => {
+  assert.match(dashboard, /<a class="brand" href="index\.html">/);
+  assert.match(dashboard, /<b>MELA<\/b>\s+<small>GROWTH ROOM<\/small>/);
+  assert.doesNotMatch(dashboard, /<a class="brand"[^>]*aria-label=/);
 });
 
 test("dashboard metrics calculate the lead-generation funnel from GA4 and CRM aggregates", () => {
@@ -196,4 +203,31 @@ test("dashboard data panel declares its relationship and local-access boundary",
   assert.match(dashboard, /共用這個瀏覽器設定檔/);
   assert.match(dashboardScript, /toggle\?\.focus\(\)/);
   assert.match(dashboard, /同一期間、去重後/);
+});
+
+test("RACE card success signals stay in a normal single-column footer", () => {
+  assert.match(dashboard, /<footer data-race-target>關鍵指標：工作階段、來源集中度<\/footer>/);
+  assert.match(
+    dashboardStyles,
+    /\.race-card footer \{[^}]*display: block;[^}]*padding: 0;[^}]*border: 0;[^}]*background: transparent;[^}]*\}/
+  );
+});
+
+test("dashboard gives dynamic Chinese content room at tablet widths", () => {
+  assert.match(dashboardStyles, /\.dashboard-hero > \*, \.dashboard-hero-actions, \.dataset-state \{ min-width: 0; \}/);
+  assert.match(dashboardStyles, /@media \(max-width: 1180px\)/);
+  assert.match(dashboardStyles, /@media \(max-width: 820px\)/);
+});
+
+test("dashboard keeps hero labels and period names readable at the narrowest width", () => {
+  assert.match(dashboardStyles, /\.dataset-state b \{[^}]*white-space: normal;[^}]*overflow-wrap: anywhere;[^}]*\}/);
+  assert.match(dashboardStyles, /@media \(max-width: 389px\)/);
+  assert.match(dashboardStyles, /\.dashboard-hero \.eyebrow \{[^}]*white-space: normal;[^}]*\}/);
+});
+
+test("dashboard form inputs cannot exceed their responsive grid cells", () => {
+  assert.match(
+    dashboardStyles,
+    /\.data-period input, \.input-grid input \{[^}]*box-sizing: border-box;[^}]*width: 100%;[^}]*min-width: 0;[^}]*\}/
+  );
 });
