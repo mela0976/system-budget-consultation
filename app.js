@@ -22,6 +22,11 @@
   let submissionPending = false;
   let submissionTimer;
 
+  const trackAnalyticsEvent = (name, parameters = {}) => {
+    if (typeof window.gtag !== "function") return;
+    window.gtag("event", name, parameters);
+  };
+
   document.querySelectorAll("[data-year]").forEach((node) => {
     node.textContent = new Date().getFullYear();
   });
@@ -117,7 +122,7 @@
     updateSummary();
   };
 
-  const openDialog = (budget = "") => {
+  const openDialog = (budget = "", source = "cta") => {
     resetForm(false);
     setBudget(budget);
     document.querySelector("#page-url").value = window.location.href;
@@ -125,14 +130,15 @@
     document.querySelector("#form-started-at").value = String(Date.now());
     document.querySelector("#lead-id").value = createLeadId();
     dialog.showModal();
+    trackAnalyticsEvent("intake_opened", { source, selected_budget: budget || "not_selected" });
     window.setTimeout(() => steps[0].querySelector("input")?.focus(), 120);
   };
 
   document.querySelectorAll(".js-open-intake").forEach((button) => {
-    button.addEventListener("click", () => openDialog());
+    button.addEventListener("click", () => openDialog("", "cta"));
   });
   document.querySelectorAll("[data-budget]").forEach((button) => {
-    button.addEventListener("click", () => openDialog(button.dataset.budget));
+    button.addEventListener("click", () => openDialog(button.dataset.budget, "budget_plan"));
   });
   document.querySelectorAll("[data-close-dialog]").forEach((button) => {
     button.addEventListener("click", () => dialog.close());
@@ -241,6 +247,7 @@
     form.querySelector(".form-actions").hidden = true;
     result.hidden = false;
     result.focus();
+    trackAnalyticsEvent("generate_lead", { form_name: "需求健檢" });
   }
 
   function resetForm(clearBudget = true) {
